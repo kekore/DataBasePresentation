@@ -7,28 +7,23 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class LoginPanel extends JPanel implements ActionListener {
-    private TopPanel topPanel;
-    private ButtonPanel buttonPanel;
+public class LoginPanel extends JPanel {
+    private TopLoginPanel topPanel;
+    private ButtonLoginPanel buttonPanel;
     public LoginPanel(Window parentWindow){
         //parent = parentWindow;
 
         setLayout(new GridLayout(2,1,0,50));
-        topPanel = new TopPanel(parentWindow);
+        topPanel = new TopLoginPanel(parentWindow);
         //topPanel.setPreferredSize(new Dimension(100,300));
         add(topPanel);
-        buttonPanel = new ButtonPanel(parentWindow);
+        buttonPanel = new ButtonLoginPanel(parentWindow);
         //buttonPanel.setPreferredSize(new Dimension(100,40));
         add(buttonPanel);
     }
-
-    @Override
-    public void actionPerformed(ActionEvent e){
-
-    }
 }
 
-class TopPanel extends JPanel{
+class TopLoginPanel extends JPanel{
     //private JFrame parent;
 
     private JTextField titleField;
@@ -39,14 +34,13 @@ class TopPanel extends JPanel{
     private JTextField passPrompt;
     protected JTextField passField;
 
-    protected TopPanel(Window parentWindow){
+    protected TopLoginPanel(Window parentWindow){
         //parent = parentWindow;
 
         titleField = new JTextField("Witaj w WarZone!");
         titleField.setEditable(false);
         titleField.setBorder(null);
         titleField.setFont(new Font("Comic Sans MS",Font.PLAIN, 30));
-
 
         try {
             carImage = ImageIO.read(new File("car.png"));
@@ -74,13 +68,13 @@ class TopPanel extends JPanel{
     }
 }
 
-class ButtonPanel extends JPanel{
+class ButtonLoginPanel extends JPanel{
     //private JFrame parent;
 
     private JButton loginBut;
     private JButton registerBut;
 
-    protected ButtonPanel(Window parentWindow){
+    protected ButtonLoginPanel(Window parentWindow){
         //parent = parentWindow;
 
         //setLayout(new FlowLayout());
@@ -92,7 +86,6 @@ class ButtonPanel extends JPanel{
         loginBut.addActionListener(parentWindow);
 
         registerBut = new JButton("Zarejestruj");
-        registerBut.setEnabled(false);
         registerBut.setPreferredSize(new Dimension(100,30));
         registerBut.setAlignmentX(Component.CENTER_ALIGNMENT);
 
