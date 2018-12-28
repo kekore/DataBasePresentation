@@ -1,17 +1,26 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
-public class RaportPanel extends JPanel {
+public class RaportPanel extends JPanel implements ActionListener {
     private TopRaportPanel topRaportPanel;
     private BotRaportPanel botRaportPanel;
     RaportPanel(Window parentWindow){
-        topRaportPanel = new TopRaportPanel(parentWindow, 6);
+        topRaportPanel = new TopRaportPanel(parentWindow, 60);
         botRaportPanel = new BotRaportPanel(parentWindow);
 
         setLayout(new GridLayout(2,1,0,10));
 
         add(topRaportPanel);
         add(botRaportPanel);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e){
+
     }
 }
 
@@ -27,10 +36,11 @@ class TopRaportPanel extends JPanel{
         //titleField.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleField.setHorizontalAlignment(JTextField.CENTER);
 
-        raportTable = new RaportTable(parentWindow, 60);
+        raportTable = new RaportTable(parentWindow, rows);
         scrollPane = new JScrollPane();
+        scrollPane.setPreferredSize(new Dimension(400,100));
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setViewportView(raportTable);
         //scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -57,7 +67,124 @@ class RaportTable extends JPanel {
 }
 
 class BotRaportPanel extends JPanel{
+    private JButton exportBut;
+    private TimePanel timePanel;
+    private CarPanel carPanel;
+    private ZonePanel zonePanel;
     BotRaportPanel(Window parentWindow){
+        exportBut = new JButton("Eksportuj do pliku");
+        timePanel = new TimePanel(parentWindow);
+        carPanel = new CarPanel(parentWindow);
 
+        setLayout(new GridLayout(4,1,0,10));
+
+        add(exportBut);
+        add(timePanel);
+        add(carPanel);
     }
+}
+
+class TimePanel extends JPanel{
+    private JTextField name;
+    private JTextField start;
+    private JTextField end;
+    TimePanel(Window parentWindow){
+        name = new JTextField("Wybierz przedział czasowy");
+        name.setEditable(false);
+        name.setBorder(null);
+        name.setPreferredSize(new Dimension(150,20));
+
+        start = new JTextField();
+        start.setPreferredSize(new Dimension(100,20));
+
+        end = new JTextField();
+        end.setPreferredSize(new Dimension(100,20));
+
+        //setLayout(new GridLayout(1,3,10,0));
+
+        add(name);
+        add(start);
+        add(end);
+    }
+}
+
+class CarPanel extends JPanel{
+    private JTextField name;
+    //private JList<JCheckBox> carList;
+    //private JComboBox<JCheckBox> carList;
+    private JMenuBar bar;
+    private JMenu carList;
+    //private CarBoxes carBoxes;
+    //private JScrollPane scrollPane;
+    //private JComboBox comboBox;
+    //private JCheckBoxMenuItem menu;
+    CarPanel(Window parentWindow){
+        name = new JTextField("Wybierz auta");
+        name.setEditable(false);
+        name.setBorder(null);
+        name.setPreferredSize(new Dimension(150,20));
+
+        //carList = new JList<JCheckBox>(boxes);
+        //carList = new JComboBox<JCheckBox>(boxes);
+        bar = new JMenuBar();
+        carList = new JMenu("Samochody");
+        carList.setPreferredSize(new Dimension(200,20));
+
+        //take list of cars from database
+        //ArrayList<String> cars = new ArrayList<String>();
+        CustomJCBMenuItem[] boxes = new CustomJCBMenuItem[4];
+        for(int i = 0; i < 4; i++){
+            boxes[i] = new CustomJCBMenuItem("Car " + i);
+            carList.add(boxes[i]);
+        }
+        /*carBoxes = new CarBoxes(cars);
+        scrollPane = new JScrollPane();
+        scrollPane.setPreferredSize(new Dimension(100,30));
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setViewportView(carBoxes);*/
+        //comboBox = new JComboBox();
+        //comboBox.add(new JCheckBox("Car0"));
+
+        bar.add(carList);
+        //bar.is
+        //carList = new JList<>();
+        //menu = new JCheckBoxMenuItem("menu");
+
+        add(name);
+        add(bar);
+        //add(menu);
+    }
+}
+
+class CustomJCBMenuItem extends JCheckBoxMenuItem{
+    public CustomJCBMenuItem(String text) {
+        super(text);
+    }
+
+    @Override
+    protected void processMouseEvent(MouseEvent evt) {
+        if (evt.getID() == MouseEvent.MOUSE_RELEASED && contains(evt.getPoint())) {
+            doClick();
+            setArmed(true);
+        } else {
+            super.processMouseEvent(evt);
+        }
+    }
+}
+
+/*class CarBoxes extends JPanel{
+    private JCheckBox[] boxes;
+    CarBoxes(ArrayList<String> cars){
+        boxes = new JCheckBox[cars.size()];
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        for(int b = 0; b < cars.size(); b++){
+            boxes[b] = new JCheckBox(cars.get(b));
+            add(boxes[b]);
+        }
+    }
+}*/
+
+class ZonePanel extends JPanel{
+
 }

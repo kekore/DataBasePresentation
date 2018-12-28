@@ -38,6 +38,8 @@ public class Window extends JFrame implements ActionListener {
                     add(raportPanel);
                     revalidate();
                     repaint();
+                    state = State.RAPORT;
+                    //else wypisz blad
                 }
                 break;
         }
