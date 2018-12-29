@@ -1,3 +1,5 @@
+import DataBase.Connection;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -5,8 +7,12 @@ import java.awt.event.ActionListener;
 
 public class Window extends JFrame implements ActionListener {
     private LoginPanel loginPanel;
+    private MPanel mPanel;
     private RaportPanel raportPanel;
+    private NewCarPanel newCarPanel;
+    private RegisterPanel registerPanel;
     private State state;
+    private Connection connection;
 
     public Window(){
         super("Aplikacja");
@@ -34,12 +40,39 @@ public class Window extends JFrame implements ActionListener {
                     System.out.println("KLIKNIETO ZALOGUJ");
                     //if(authorized)
                     remove(loginPanel);
+                    mPanel = new MPanel(this);
+                    add(mPanel);
+                    revalidate();
+                    repaint();
+                    state = State.M;
+                    //else wypisz blad
+                }
+                else if(((JButton)e.getSource()).getText().equals("Zarejestruj się")){
+                    System.out.println("KLIKNIETO ZAREJESTRUJ");
+                    remove(loginPanel);
+                    registerPanel = new RegisterPanel(this);
+                    add(registerPanel);
+                    revalidate();
+                    repaint();
+                    state = State.REGISTER;
+                }
+                break;
+            case M:
+                if(((JButton)e.getSource()).getText().equals("Zobacz raporty")){
+                    remove(mPanel);
                     raportPanel = new RaportPanel(this);
                     add(raportPanel);
                     revalidate();
                     repaint();
                     state = State.RAPORT;
-                    //else wypisz blad
+                }
+                else if(((JButton)e.getSource()).getText().equals("Dodaj nowe auto")){
+                    remove(mPanel);
+                    newCarPanel = new NewCarPanel(this);
+                    add(newCarPanel);
+                    revalidate();
+                    repaint();
+                    state = State.NEWCAR;
                 }
                 break;
         }

@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+//TODO maskowanie hasla
 public class LoginPanel extends JPanel {
     private TopLoginPanel topPanel;
     private ButtonLoginPanel buttonPanel;
@@ -85,9 +86,10 @@ class ButtonLoginPanel extends JPanel{
         loginBut.setAlignmentX(Component.CENTER_ALIGNMENT);
         loginBut.addActionListener(parentWindow);
 
-        registerBut = new JButton("Zarejestruj");
+        registerBut = new JButton("Zarejestruj się");
         registerBut.setPreferredSize(new Dimension(100,30));
         registerBut.setAlignmentX(Component.CENTER_ALIGNMENT);
+        registerBut.addActionListener(parentWindow);
 
         //setLayout(new GridLayout(2,1,20,20));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

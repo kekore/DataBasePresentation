@@ -10,9 +10,11 @@ public class RaportPanel extends JPanel implements ActionListener {
     private BotRaportPanel botRaportPanel;
     RaportPanel(Window parentWindow){
         topRaportPanel = new TopRaportPanel(parentWindow, 60);
+        //topRaportPanel.setPreferredSize(new Dimension(300,600));
         botRaportPanel = new BotRaportPanel(parentWindow);
 
         setLayout(new GridLayout(2,1,0,10));
+        //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         add(topRaportPanel);
         add(botRaportPanel);
@@ -38,7 +40,7 @@ class TopRaportPanel extends JPanel{
 
         raportTable = new RaportTable(parentWindow, rows);
         scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(400,100));
+        scrollPane.setPreferredSize(new Dimension(400,220));
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setViewportView(raportTable);
@@ -71,16 +73,27 @@ class BotRaportPanel extends JPanel{
     private TimePanel timePanel;
     private CarPanel carPanel;
     private ZonePanel zonePanel;
+    private JTextArea messField;
     BotRaportPanel(Window parentWindow){
         exportBut = new JButton("Eksportuj do pliku");
         timePanel = new TimePanel(parentWindow);
         carPanel = new CarPanel(parentWindow);
+        zonePanel = new ZonePanel(parentWindow);
 
-        setLayout(new GridLayout(4,1,0,10));
+        messField = new JTextArea("TUTAJ BEDZIE INFO CO EWENTUALNIE ZLE WPISAL");
+        messField.setEditable(false);
+        messField.setBorder(null);
+        messField.setOpaque(false);
+        messField.setLineWrap(true);
+        messField.setWrapStyleWord(true);
+
+        setLayout(new GridLayout(5,1,0,10));
 
         add(exportBut);
         add(timePanel);
         add(carPanel);
+        add(zonePanel);
+        add(messField);
     }
 }
 
@@ -114,6 +127,7 @@ class CarPanel extends JPanel{
     //private JComboBox<JCheckBox> carList;
     private JMenuBar bar;
     private JMenu carList;
+    private CustomJCBMenuItem[] boxes;
     //private CarBoxes carBoxes;
     //private JScrollPane scrollPane;
     //private JComboBox comboBox;
@@ -132,7 +146,7 @@ class CarPanel extends JPanel{
 
         //take list of cars from database
         //ArrayList<String> cars = new ArrayList<String>();
-        CustomJCBMenuItem[] boxes = new CustomJCBMenuItem[4];
+        boxes = new CustomJCBMenuItem[4];
         for(int i = 0; i < 4; i++){
             boxes[i] = new CustomJCBMenuItem("Car " + i);
             carList.add(boxes[i]);
@@ -157,19 +171,33 @@ class CarPanel extends JPanel{
     }
 }
 
-class CustomJCBMenuItem extends JCheckBoxMenuItem{
-    public CustomJCBMenuItem(String text) {
-        super(text);
-    }
+class ZonePanel extends JPanel{
+    private JTextField name;
+    private JMenuBar bar;
+    private JMenu zoneList;
+    private CustomJCBMenuItem[] boxes;
+    ZonePanel(Window parentWindow){
+        name = new JTextField("Wybierz strefy");
+        name.setEditable(false);
+        name.setBorder(null);
+        name.setPreferredSize(new Dimension(150,20));
 
-    @Override
-    protected void processMouseEvent(MouseEvent evt) {
-        if (evt.getID() == MouseEvent.MOUSE_RELEASED && contains(evt.getPoint())) {
-            doClick();
-            setArmed(true);
-        } else {
-            super.processMouseEvent(evt);
+        bar = new JMenuBar();
+        zoneList = new JMenu("Strefy");
+        zoneList.setPreferredSize(new Dimension(200,20));
+
+        //take list of zones from database
+        //ArrayList<String> cars = new ArrayList<String>();
+        boxes = new CustomJCBMenuItem[4];
+        for(int i = 0; i < 4; i++){
+            boxes[i] = new CustomJCBMenuItem("Zone " + i);
+            zoneList.add(boxes[i]);
         }
+
+        bar.add(zoneList);
+
+        add(name);
+        add(bar);
     }
 }
 
@@ -185,6 +213,18 @@ class CustomJCBMenuItem extends JCheckBoxMenuItem{
     }
 }*/
 
-class ZonePanel extends JPanel{
+class CustomJCBMenuItem extends JCheckBoxMenuItem{
+    public CustomJCBMenuItem(String text) {
+        super(text);
+    }
 
+    @Override
+    protected void processMouseEvent(MouseEvent evt) {
+        if (evt.getID() == MouseEvent.MOUSE_RELEASED && contains(evt.getPoint())) {
+            doClick();
+            setArmed(true);
+        } else {
+            super.processMouseEvent(evt);
+        }
+    }
 }
