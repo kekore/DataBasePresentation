@@ -74,7 +74,41 @@ public class Window extends JFrame implements ActionListener {
                     repaint();
                     state = State.NEWCAR;
                 }
+                else if(((JButton)e.getSource()).getText().equals("Wyloguj")){
+                    //Wyloguj
+                    remove(mPanel);
+                    add(loginPanel);
+                    revalidate();
+                    repaint();
+                    state = State.LOGIN;
+                }
                 break;
+            case RAPORT:
+                if(((JButton)e.getSource()).getText().equals("Powrót do menu")){
+                    remove(raportPanel);
+                    add(mPanel);
+                    revalidate();
+                    repaint();
+                    state = State.M;
+                }
+                break;
+            case NEWCAR:
+                if(((JButton)e.getSource()).getText().equals("Powrót do menu")){
+                    remove(newCarPanel);
+                    add(mPanel);
+                    revalidate();
+                    repaint();
+                    state = State.M;
+                }
+                break;
+            case REGISTER:
+                if(((JButton)e.getSource()).getText().equals("Powrót")){
+                    remove(registerPanel);
+                    add(loginPanel);
+                    revalidate();
+                    repaint();
+                    state = State.LOGIN;
+                }
         }
     }
 }

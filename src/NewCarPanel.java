@@ -5,6 +5,7 @@ public class NewCarPanel extends JPanel {
     private JTextField titleField;
     private FPanel fPanel;
     private JButton addBut;
+    private JButton backBut;
     private JTextArea messField;
     NewCarPanel(Window parentWindow){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -19,6 +20,9 @@ public class NewCarPanel extends JPanel {
 
         addBut = new JButton("Dodaj auto");
 
+        backBut = new JButton("Powrót do menu");
+        backBut.addActionListener(parentWindow);
+
         messField = new JTextArea("TUTAJ BEDZIE INFO CO EWENTUALNIE ZLE WPISAL");
         messField.setEditable(false);
         messField.setBorder(null);
@@ -31,6 +35,8 @@ public class NewCarPanel extends JPanel {
         add(fPanel);
         add(Box.createRigidArea(new Dimension(0, 10)));
         add(addBut);
+        add(Box.createRigidArea(new Dimension(0, 10)));
+        add(backBut);
         add(Box.createRigidArea(new Dimension(0, 10)));
         add(messField);
     }

@@ -5,6 +5,7 @@ public class MPanel extends JPanel {
     private JTextField titleField;
     private JButton raportBut;
     private JButton addCarBut;
+    private JButton logoutBut;
     MPanel(Window parentWindow){
         titleField = new JTextField("Miłego dnia!");
         titleField.setEditable(false);
@@ -20,6 +21,10 @@ public class MPanel extends JPanel {
         addCarBut.addActionListener(parentWindow);
         addCarBut.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        logoutBut = new JButton("Wyloguj");
+        logoutBut.addActionListener(parentWindow);
+        logoutBut.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         add(titleField);
@@ -27,5 +32,7 @@ public class MPanel extends JPanel {
         add(raportBut);
         add(Box.createRigidArea(new Dimension(0,20)));
         add(addCarBut);
+        add(Box.createRigidArea(new Dimension(0,20)));
+        add(logoutBut);
     }
 }

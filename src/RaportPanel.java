@@ -69,13 +69,13 @@ class RaportTable extends JPanel {
 }
 
 class BotRaportPanel extends JPanel{
-    private JButton exportBut;
+    private ButPanel butPanel;
     private TimePanel timePanel;
     private CarPanel carPanel;
     private ZonePanel zonePanel;
     private JTextArea messField;
     BotRaportPanel(Window parentWindow){
-        exportBut = new JButton("Eksportuj do pliku");
+        butPanel = new ButPanel(parentWindow);
         timePanel = new TimePanel(parentWindow);
         carPanel = new CarPanel(parentWindow);
         zonePanel = new ZonePanel(parentWindow);
@@ -89,11 +89,26 @@ class BotRaportPanel extends JPanel{
 
         setLayout(new GridLayout(5,1,0,10));
 
-        add(exportBut);
+        add(butPanel);
         add(timePanel);
         add(carPanel);
         add(zonePanel);
         add(messField);
+    }
+}
+
+class ButPanel extends JPanel{
+    private JButton backBut;
+    private JButton exportBut;
+    ButPanel(Window parentWindow){
+        backBut = new JButton("Powrót do menu");
+        backBut.addActionListener(parentWindow);
+        exportBut = new JButton("Eksportuj do pliku");
+
+        setLayout(new GridLayout(1,2,10,0));
+
+        add(backBut);
+        add(exportBut);
     }
 }
 
@@ -121,7 +136,7 @@ class TimePanel extends JPanel{
     }
 }
 
-class CarPanel extends JPanel{
+class CarPanel extends JPanel implements ActionListener{
     private JTextField name;
     //private JList<JCheckBox> carList;
     //private JComboBox<JCheckBox> carList;
@@ -133,7 +148,7 @@ class CarPanel extends JPanel{
     //private JComboBox comboBox;
     //private JCheckBoxMenuItem menu;
     CarPanel(Window parentWindow){
-        name = new JTextField("Wybierz auta");
+        name = new JTextField("Wybierz samochody");
         name.setEditable(false);
         name.setBorder(null);
         name.setPreferredSize(new Dimension(150,20));
@@ -141,7 +156,7 @@ class CarPanel extends JPanel{
         //carList = new JList<JCheckBox>(boxes);
         //carList = new JComboBox<JCheckBox>(boxes);
         bar = new JMenuBar();
-        carList = new JMenu("Samochody");
+        carList = new JMenu("Wybierz samochody");
         carList.setPreferredSize(new Dimension(200,20));
 
         //take list of cars from database
@@ -149,6 +164,7 @@ class CarPanel extends JPanel{
         boxes = new CustomJCBMenuItem[4];
         for(int i = 0; i < 4; i++){
             boxes[i] = new CustomJCBMenuItem("Car " + i);
+            boxes[i].addActionListener(this);
             carList.add(boxes[i]);
         }
         /*carBoxes = new CarBoxes(cars);
@@ -169,9 +185,27 @@ class CarPanel extends JPanel{
         add(bar);
         //add(menu);
     }
+
+    @Override
+    public void actionPerformed(ActionEvent e){
+        for(CustomJCBMenuItem checkbox : boxes){
+            if(e.getSource() == checkbox){
+                String newText = "";
+                for(CustomJCBMenuItem c : boxes){
+                    if(c.getState()){
+                        if(newText.equals("")) newText += c.getText();
+                        else newText = newText + "; " + c.getText();
+                    }
+                }
+                if(newText.equals("")) newText = "Wybierz samochody";
+                carList.setText(newText);
+                return;
+            }
+        }
+    }
 }
 
-class ZonePanel extends JPanel{
+class ZonePanel extends JPanel implements ActionListener{
     private JTextField name;
     private JMenuBar bar;
     private JMenu zoneList;
@@ -183,14 +217,15 @@ class ZonePanel extends JPanel{
         name.setPreferredSize(new Dimension(150,20));
 
         bar = new JMenuBar();
-        zoneList = new JMenu("Strefy");
+        zoneList = new JMenu("Wybierz strefy");
         zoneList.setPreferredSize(new Dimension(200,20));
 
         //take list of zones from database
         //ArrayList<String> cars = new ArrayList<String>();
-        boxes = new CustomJCBMenuItem[4];
-        for(int i = 0; i < 4; i++){
+        boxes = new CustomJCBMenuItem[10];
+        for(int i = 0; i < 10; i++){
             boxes[i] = new CustomJCBMenuItem("Zone " + i);
+            boxes[i].addActionListener(this);
             zoneList.add(boxes[i]);
         }
 
@@ -198,6 +233,23 @@ class ZonePanel extends JPanel{
 
         add(name);
         add(bar);
+    }
+
+    public void actionPerformed(ActionEvent e){
+        for(CustomJCBMenuItem checkbox : boxes){
+            if(e.getSource() == checkbox){
+                String newText = "";
+                for(CustomJCBMenuItem c : boxes){
+                    if(c.getState()){
+                        if(newText.equals("")) newText += c.getText();
+                        else newText = newText + "; " + c.getText();
+                    }
+                }
+                if(newText.equals("")) newText = "Wybierz strefy";
+                zoneList.setText(newText);
+                return;
+            }
+        }
     }
 }
 

@@ -8,6 +8,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
     private JTextField titleField;
     private FormPanel formPanel;
     private JButton registerBut;
+    private JButton backBut;
     private JTextArea messField;
     RegisterPanel(Window parentWindow){
         formPanel = new FormPanel();
@@ -20,6 +21,9 @@ public class RegisterPanel extends JPanel implements ActionListener {
 
         registerBut = new JButton("Zarejestruj");
         registerBut.addActionListener(this);
+
+        backBut = new JButton("Powrót");
+        backBut.addActionListener(parentWindow);
 
         messField = new JTextArea("TUTAJ BEDZIE INFO CO EWENTUALNIE ZLE WPISAL");
         messField.setEditable(false);
@@ -37,6 +41,8 @@ public class RegisterPanel extends JPanel implements ActionListener {
         add(Box.createRigidArea(new Dimension(0, 10)));
         add(registerBut);
         add(Box.createRigidArea(new Dimension(0, 10)));
+        add(backBut);
+        add(Box.createRigidArea(new Dimension(0, 10)));
         add(messField);
     }
 
@@ -48,7 +54,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
     }
 }
 
-class FormPanel extends JPanel{
+class FormPanel extends JPanel implements ActionListener{
     private JTextField[] texts;
     private JTextField[] fields;
     private JMenuBar bar1;
@@ -100,7 +106,9 @@ class FormPanel extends JPanel{
         radios2 = new JRadioButtonMenuItem[4];
         for(int i = 0; i < 4; i++){
             radios1[i] = new JRadioButtonMenuItem("Typ " + i);
+            radios1[i].addActionListener(this);
             radios2[i] = new JRadioButtonMenuItem("Strefa " + i);
+            radios2[i].addActionListener(this);
             group1.add(radios1[i]);
             menu1.add(radios1[i]);
             group2.add(radios2[i]);
@@ -131,5 +139,22 @@ class FormPanel extends JPanel{
         add(fields[7]);
         add(texts[10]);
         add(fields[8]);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e){
+        for(JRadioButtonMenuItem radio : radios1){
+            if(e.getSource() == radio){
+                //System.out.println(radio.getText());
+                menu1.setText(radio.getText());
+                return;
+            }
+        }
+        for(JRadioButtonMenuItem radio : radios2){
+            if(e.getSource() == radio){
+                menu2.setText(radio.getText());
+                return;
+            }
+        }
     }
 }
