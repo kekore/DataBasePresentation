@@ -1,7 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class NewCarPanel extends JPanel {
+public class NewCarPanel extends JPanel implements ActionListener {
     private JTextField titleField;
     private FPanel fPanel;
     private JButton addBut;
@@ -19,6 +21,7 @@ public class NewCarPanel extends JPanel {
         fPanel = new FPanel();
 
         addBut = new JButton("Dodaj auto");
+        addBut.addActionListener(this);
 
         backBut = new JButton("Powrót do menu");
         backBut.addActionListener(parentWindow);
@@ -39,6 +42,12 @@ public class NewCarPanel extends JPanel {
         add(backBut);
         add(Box.createRigidArea(new Dimension(0, 10)));
         add(messField);
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (((JButton) e.getSource()).getText().equals("Dodaj auto")) {
+            //proceed query for adding car
+        }
     }
 }
 

@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 
 public class Window extends JFrame implements ActionListener {
     private LoginPanel loginPanel;
@@ -12,10 +13,11 @@ public class Window extends JFrame implements ActionListener {
     private NewCarPanel newCarPanel;
     private RegisterPanel registerPanel;
     private State state;
-    private Connection connection;
+    protected Connection connection;
 
     public Window(){
         super("Aplikacja");
+        //setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(600,600);
@@ -55,6 +57,10 @@ public class Window extends JFrame implements ActionListener {
                     revalidate();
                     repaint();
                     state = State.REGISTER;
+                }
+                else if(((JButton)e.getSource()).getText().equals("Zamknij aplikację")){
+                    //logout of database
+                    dispose();
                 }
                 break;
             case M:

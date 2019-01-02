@@ -74,6 +74,7 @@ class ButtonLoginPanel extends JPanel{
 
     private JButton loginBut;
     private JButton registerBut;
+    private JButton exitBut;
 
     protected ButtonLoginPanel(Window parentWindow){
         //parent = parentWindow;
@@ -91,12 +92,18 @@ class ButtonLoginPanel extends JPanel{
         registerBut.setAlignmentX(Component.CENTER_ALIGNMENT);
         registerBut.addActionListener(parentWindow);
 
+        exitBut = new JButton("Zamknij aplikację");
+        exitBut.setPreferredSize(new Dimension(100,30));
+        exitBut.setAlignmentX(Component.CENTER_ALIGNMENT);
+        exitBut.addActionListener(parentWindow);
+
         //setLayout(new GridLayout(2,1,20,20));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         add(loginBut);
         add(Box.createRigidArea(new Dimension(0,10)));
         add(registerBut);
+        add(Box.createRigidArea(new Dimension(0,10)));
+        add(exitBut);
     }
-
 }

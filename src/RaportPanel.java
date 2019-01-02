@@ -11,18 +11,20 @@ public class RaportPanel extends JPanel implements ActionListener {
     RaportPanel(Window parentWindow){
         topRaportPanel = new TopRaportPanel(parentWindow, 60);
         //topRaportPanel.setPreferredSize(new Dimension(300,600));
-        botRaportPanel = new BotRaportPanel(parentWindow);
+        botRaportPanel = new BotRaportPanel(parentWindow, this);
 
         setLayout(new GridLayout(2,1,0,10));
         //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         add(topRaportPanel);
         add(botRaportPanel);
+
+        //TODO get all info and put into table
     }
 
     @Override
     public void actionPerformed(ActionEvent e){
-
+        //TODO if something changed in bottom panel, do select from database again
     }
 }
 
@@ -69,16 +71,16 @@ class RaportTable extends JPanel {
 }
 
 class BotRaportPanel extends JPanel{
-    private ButPanel butPanel;
-    private TimePanel timePanel;
-    private CarPanel carPanel;
-    private ZonePanel zonePanel;
-    private JTextArea messField;
-    BotRaportPanel(Window parentWindow){
+    protected ButPanel butPanel;
+    protected TimePanel timePanel;
+    protected CarPanel carPanel;
+    protected ZonePanel zonePanel;
+    protected JTextArea messField;
+    BotRaportPanel(Window parentWindow, RaportPanel parentPanel){
         butPanel = new ButPanel(parentWindow);
-        timePanel = new TimePanel(parentWindow);
-        carPanel = new CarPanel(parentWindow);
-        zonePanel = new ZonePanel(parentWindow);
+        timePanel = new TimePanel(parentWindow, parentPanel);
+        carPanel = new CarPanel(parentWindow, parentPanel);
+        zonePanel = new ZonePanel(parentWindow, parentPanel);
 
         messField = new JTextArea("TUTAJ BEDZIE INFO CO EWENTUALNIE ZLE WPISAL");
         messField.setEditable(false);
@@ -99,10 +101,11 @@ class BotRaportPanel extends JPanel{
 
 class ButPanel extends JPanel{
     private JButton backBut;
-    private JButton exportBut;
+    protected JButton exportBut;
     ButPanel(Window parentWindow){
         backBut = new JButton("Powrót do menu");
         backBut.addActionListener(parentWindow);
+
         exportBut = new JButton("Eksportuj do pliku");
 
         setLayout(new GridLayout(1,2,10,0));
@@ -113,10 +116,10 @@ class ButPanel extends JPanel{
 }
 
 class TimePanel extends JPanel{
-    private JTextField name;
-    private JTextField start;
-    private JTextField end;
-    TimePanel(Window parentWindow){
+    protected JTextField name;
+    protected JTextField start;
+    protected JTextField end;
+    TimePanel(Window parentWindow, RaportPanel parentPanel){
         name = new JTextField("Wybierz przedział czasowy");
         name.setEditable(false);
         name.setBorder(null);
@@ -124,9 +127,11 @@ class TimePanel extends JPanel{
 
         start = new JTextField();
         start.setPreferredSize(new Dimension(100,20));
+        start.addActionListener(parentPanel);
 
         end = new JTextField();
         end.setPreferredSize(new Dimension(100,20));
+        end.addActionListener(parentPanel);
 
         //setLayout(new GridLayout(1,3,10,0));
 
@@ -137,17 +142,17 @@ class TimePanel extends JPanel{
 }
 
 class CarPanel extends JPanel implements ActionListener{
-    private JTextField name;
+    protected JTextField name;
     //private JList<JCheckBox> carList;
     //private JComboBox<JCheckBox> carList;
-    private JMenuBar bar;
-    private JMenu carList;
-    private CustomJCBMenuItem[] boxes;
+    protected JMenuBar bar;
+    protected JMenu carList;
+    protected CustomJCBMenuItem[] boxes;
     //private CarBoxes carBoxes;
     //private JScrollPane scrollPane;
     //private JComboBox comboBox;
     //private JCheckBoxMenuItem menu;
-    CarPanel(Window parentWindow){
+    CarPanel(Window parentWindow, RaportPanel parentPanel){
         name = new JTextField("Wybierz samochody");
         name.setEditable(false);
         name.setBorder(null);
@@ -165,6 +170,7 @@ class CarPanel extends JPanel implements ActionListener{
         for(int i = 0; i < 4; i++){
             boxes[i] = new CustomJCBMenuItem("Car " + i);
             boxes[i].addActionListener(this);
+            boxes[i].addActionListener(parentPanel);
             carList.add(boxes[i]);
         }
         /*carBoxes = new CarBoxes(cars);
@@ -206,11 +212,11 @@ class CarPanel extends JPanel implements ActionListener{
 }
 
 class ZonePanel extends JPanel implements ActionListener{
-    private JTextField name;
-    private JMenuBar bar;
-    private JMenu zoneList;
-    private CustomJCBMenuItem[] boxes;
-    ZonePanel(Window parentWindow){
+    protected JTextField name;
+    protected JMenuBar bar;
+    protected JMenu zoneList;
+    protected CustomJCBMenuItem[] boxes;
+    ZonePanel(Window parentWindow, RaportPanel parentPanel){
         name = new JTextField("Wybierz strefy");
         name.setEditable(false);
         name.setBorder(null);
@@ -226,6 +232,7 @@ class ZonePanel extends JPanel implements ActionListener{
         for(int i = 0; i < 10; i++){
             boxes[i] = new CustomJCBMenuItem("Zone " + i);
             boxes[i].addActionListener(this);
+            boxes[i].addActionListener(parentPanel);
             zoneList.add(boxes[i]);
         }
 
