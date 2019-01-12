@@ -111,6 +111,7 @@ public class DBConnection {
             return result;
         } catch (SQLException e) {
             System.out.println("Nie jestes zalogowany");
+            System.out.println(e.getSQLState());
         }
         return null;
 
@@ -121,6 +122,20 @@ public class DBConnection {
         try {
             statement = connection.createStatement();
             ResultSet result = statement.executeQuery("SELECT Type from TARIFF_VEHICLE");
+            statement.close();
+            return result;
+        } catch (SQLException e) {
+            System.out.println("Nie jestes zalogowany");
+        }
+        return null;
+    }
+
+    // zwraca liste rejestracji uzytkownika
+    public ResultSet RegistrationList() {
+        try {
+            statement = connection.createStatement();
+            ResultSet result = statement
+                    .executeQuery("SELECT Registration_number from VEHICLE where User_id =  " + getUserId());
             statement.close();
             return result;
         } catch (SQLException e) {
@@ -146,7 +161,8 @@ public class DBConnection {
     public int getUserId() {
         try {
             statement = connection.createStatement();
-            ResultSet result = statement.executeQuery("SELECT id from USER where TelNumber = " + login);
+            ResultSet result = statement
+                    .executeQuery("SELECT id from USER where TelNumber = " + Integer.toString(login));
             statement.close();
             while (result.next()) {
                 int id = result.getInt("USER.id");
@@ -171,6 +187,62 @@ public class DBConnection {
             System.out.println("Taki pojazd ju� dodano");
         }
 
+    }
+
+    // rejestracja nowego uzytkownika
+    public void addUser(String[] rejestracja) {
+        try {
+            int userId = getMaxId("id", "USER") + 1;
+            int cardId = getMaxId("id", "PAYMENT_CARD") + 1;
+            int freeUserId = getMaxId("id", "FREE_ACCESS_USER") + 1;
+            int zone = getZoneId("Ochota");
+            statement = connection.createStatement();
+
+            statement.executeQuery("INSERT into USER VALUES (" + userId + ",\"" + rejestracja[0] + "\", \"" + rejestracja[1]
+                    + "\", \"" + rejestracja[2] + "\", \"" + rejestracja[9] + "\", 'aktywny');");
+            statement.executeQuery("INSERT into VEHICLE VALUES (\"" + rejestracja[3] + "\", \"" + rejestracja[4] + "\"," + userId
+                    + ");");
+            statement.executeQuery("INSERT into PAYMENT_CARD VALUES (" + cardId + ",\"" + rejestracja[6] + "\", \""
+                    + rejestracja[7] + "\", \"" + rejestracja[8] + "\"," + userId + ");");
+            statement.executeQuery("INSERT into FREE_ACCESS_USER VALUES(" + freeUserId + ", 'mieszkaniec', " + userId + "," + zone
+                    + ");");
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println("Pojazd jest juz w bazie");
+        }
+
+    }
+
+
+
+    public int getMaxId(String column, String table) {
+        try {
+            statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("select MAX(" + column + ") from " + table);
+            statement.close();
+            while (result.next()) {
+                int maxId = result.getInt("MAX(id)");
+                return maxId;
+            }
+        } catch (SQLException e) {
+            System.out.println("Nie jestes zalogowany");
+        }
+        return 0;
+    }
+
+    public int getZoneId(String zoneName) {
+        try {
+            statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("select id from ZONE where Name = \"" + zoneName + "\"");
+            statement.close();
+            while (result.next()) {
+                int zoneId = result.getInt("ZONE.id");
+                return zoneId;
+            }
+        } catch (SQLException e) {
+            System.out.println("Nie jestes zalogowany");
+        }
+        return 0;
     }
 
 }

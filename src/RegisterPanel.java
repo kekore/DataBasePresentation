@@ -72,7 +72,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
                 legal = false;
             }
             //check nr rej
-            if(formPanel.fields[3].getText().length() <= 5 || formPanel.fields[3].getText().length() >= 8){
+            if(formPanel.fields[3].getText().length() <= 4 || formPanel.fields[3].getText().length() >= 8){
                 messField.setText(messField.getText() + "Numer rejestracyjny jest niepoprawny!\n");
                 legal = false;
             }
@@ -114,6 +114,9 @@ public class RegisterPanel extends JPanel implements ActionListener {
             if(new String(formPanel.pass1.getPassword()).length() < 8){
                 messField.setText(messField.getText() + "Hasło jest za krótkie!\n");
                 legal = false;
+            }
+            if(legal){
+                //register new user
             }
         }
     }
