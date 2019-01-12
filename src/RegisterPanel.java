@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-//TODO maskowanie hasla
 public class RegisterPanel extends JPanel implements ActionListener {
     private JTextField titleField;
     private FormPanel formPanel;
@@ -18,7 +17,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
         titleField = new JTextField("Zarejestruj się");
         titleField.setEditable(false);
         titleField.setBorder(null);
-        titleField.setFont(new Font("Comic Sans MS",Font.PLAIN, 30));
+        titleField.setFont(new Font("Comic Sans MS",Font.PLAIN, 18));
         titleField.setHorizontalAlignment(JTextField.CENTER);
 
         registerBut = new JButton("Zarejestruj");
@@ -27,7 +26,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
         backBut = new JButton("Powrót");
         backBut.addActionListener(parentWindow);
 
-        messField = new JTextArea("TUTAJ BEDZIE INFO CO EWENTUALNIE ZLE WPISAL");
+        messField = new JTextArea();
         messField.setEditable(false);
         messField.setBorder(null);
         messField.setOpaque(false);
@@ -51,25 +50,88 @@ public class RegisterPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e){
         if(((JButton)e.getSource()).getText().equals("Zarejestruj")){
-            messField.setText(messField.getText() + "XD");
+            //check if input is legal
+            boolean legal = true;
+            messField.setText("");
+            //check imie
+            if(formPanel.fields[0].getText().length() <= 0 ||
+                    !formPanel.fields[0].getText().chars().allMatch(Character::isLetter)){
+                messField.setText(messField.getText() + "Imie jest niepoprawne!\n");
+                legal = false;
+            }
+            //check nazwisko
+            if(formPanel.fields[1].getText().length() <= 0 ||
+                    !formPanel.fields[1].getText().chars().allMatch(Character::isLetter)){
+                messField.setText(messField.getText() + "Nazwisko jest niepoprawne!\n");
+                legal = false;
+            }
+            //check nr tel
+            if(formPanel.fields[2].getText().length() <= 8 || formPanel.fields[2].getText().length() >= 15 ||
+                    !formPanel.fields[2].getText().chars().allMatch(Character::isDigit)){
+                messField.setText(messField.getText() + "Numer telefonu jest niepoprawny!\n");
+                legal = false;
+            }
+            //check nr rej
+            if(formPanel.fields[3].getText().length() <= 5 || formPanel.fields[3].getText().length() >= 8){
+                messField.setText(messField.getText() + "Numer rejestracyjny jest niepoprawny!\n");
+                legal = false;
+            }
+            //check rodzaj
+            JRadioButtonMenuItem type = formPanel.getChosenRadio(formPanel.radios1);
+            if(type == null){
+                messField.setText(messField.getText() + "Nie wybrano typu pojazdu!\n");
+                legal = false;
+            }
+            //check rodzaj
+            JRadioButtonMenuItem zone = formPanel.getChosenRadio(formPanel.radios2);
+            if(zone == null){
+                messField.setText(messField.getText() + "Nie wybrano dzielnicy!\n");
+                legal = false;
+            }
+            //check nr karty
+            if(formPanel.fields[4].getText().length() != 16 ||
+                    !formPanel.fields[4].getText().chars().allMatch(Character::isDigit)){
+                messField.setText(messField.getText() + "Numer karty jest niepoprawny!\n");
+                legal = false;
+            }
+            //check nr CVV
+            if(formPanel.fields[5].getText().length() != 3 ||
+                    !formPanel.fields[5].getText().chars().allMatch(Character::isDigit)){
+                messField.setText(messField.getText() + "Numer CVV jest niepoprawny!\n");
+                legal = false;
+            }
+            //check data
+            if(formPanel.fields[6].getText().length() != 5 || formPanel.fields[6].getText().charAt(2) != '/' ||
+            !(new StringBuilder(formPanel.fields[6].getText())).deleteCharAt(2).toString().chars().allMatch(Character::isDigit)){
+                messField.setText(messField.getText() + "Data wygaśnięcia jest niepoprawna!\n");
+                legal = false;
+            }
+            //check pass
+            if(!(new String(formPanel.pass1.getPassword())).equals(new String(formPanel.pass2.getPassword()))){
+                messField.setText(messField.getText() + "Hasła nie są takie same!\n");
+                legal = false;
+            }
+            if(new String(formPanel.pass1.getPassword()).length() < 8){
+                messField.setText(messField.getText() + "Hasło jest za krótkie!\n");
+                legal = false;
+            }
         }
     }
 }
 
 class FormPanel extends JPanel implements ActionListener{
     private JTextField[] texts;
-    private JTextField[] fields;
-    private JPasswordField pass1;
-    private JPasswordField pass2;
+    protected JTextField[] fields;
+    protected JPasswordField pass1;
+    protected JPasswordField pass2;
     private JMenuBar bar1;
     private JMenuBar bar2;
-    private JMenu menu1;
+    protected JMenu menu1;
     private JMenu menu2;
     private ButtonGroup group1;
     private ButtonGroup group2;
-    private JRadioButtonMenuItem[] radios1;
-    //private JRadioButtonMenuItem[] radios2;
-    private ArrayList<JRadioButtonMenuItem> radios2;
+    protected ArrayList<JRadioButtonMenuItem> radios1;
+    protected ArrayList<JRadioButtonMenuItem> radios2;
     FormPanel(Window parentWindow){
         setLayout(new GridLayout(11, 2, 4, 6));
 
@@ -96,9 +158,7 @@ class FormPanel extends JPanel implements ActionListener{
         for(int f = 0; f < 7; f++){
             fields[f] = new JTextField();
         }
-        /*for(JTextField f : fields){
-            f = new JTextField();
-        }*/
+
         pass1 = new JPasswordField();
         pass2 = new JPasswordField();
 
@@ -107,33 +167,44 @@ class FormPanel extends JPanel implements ActionListener{
         menu1 = new JMenu("Wybierz rodzaj");
         menu2 = new JMenu("Wybierz strefę");
 
-        //take list of zones from database
+        //take list of car types and zones from database
+        ResultSet cars = parentWindow.connection.vehicleList();
+        group1 = new ButtonGroup();
+        radios1 = new ArrayList<JRadioButtonMenuItem>();
         ResultSet zones = parentWindow.connection.zoneList();
         group2 = new ButtonGroup();
         radios2 = new ArrayList<JRadioButtonMenuItem>();
         try{
+            while(cars.next()){
+                String type = cars.getString("TARIFF_VEHICLE.Type");
+                String str = type.replaceAll("_"," ");
+                radios1.add(new JRadioButtonMenuItem(str));
+                radios1.get(radios1.size()-1).addActionListener(this);
+                group1.add(radios1.get(radios1.size()-1));
+                menu1.add(radios1.get(radios1.size()-1));
+            }
             while(zones.next()){
                 radios2.add(new JRadioButtonMenuItem(zones.getString("ZONE.Name")));
                 radios2.get(radios2.size()-1).addActionListener(this);
                 group2.add(radios2.get(radios2.size()-1));
                 menu2.add(radios2.get(radios2.size()-1));
             }
-        }catch (Exception e){
+        }catch (Exception e) {
 
         }
 
         //pobierz rodzaje z bazy
-        group1 = new ButtonGroup();
-        radios1 = new JRadioButtonMenuItem[4];
+        //group1 = new ButtonGroup();
+        //radios1 = new JRadioButtonMenuItem[4];
         //group2 = new ButtonGroup();
         //radios2 = new JRadioButtonMenuItem[4];
         for(int i = 0; i < 4; i++){
-            radios1[i] = new JRadioButtonMenuItem("Typ " + i);
-            radios1[i].addActionListener(this);
+            //radios1[i] = new JRadioButtonMenuItem("Typ " + i);
+            //radios1[i].addActionListener(this);
             //radios2[i] = new JRadioButtonMenuItem("Strefa " + i);
             //radios2[i].addActionListener(this);
-            group1.add(radios1[i]);
-            menu1.add(radios1[i]);
+            //group1.add(radios1[i]);
+            //menu1.add(radios1[i]);
             //group2.add(radios2[i]);
             //menu2.add(radios2[i]);
         }
@@ -162,6 +233,17 @@ class FormPanel extends JPanel implements ActionListener{
         add(pass1);
         add(texts[10]);
         add(pass2);
+    }
+
+    protected JRadioButtonMenuItem getChosenRadio(ArrayList<JRadioButtonMenuItem> list){
+        JRadioButtonMenuItem result = null;
+        for(JRadioButtonMenuItem r : list){
+            if(r.isSelected()){
+                result = r;
+                break;
+            }
+        }
+        return result;
     }
 
     @Override

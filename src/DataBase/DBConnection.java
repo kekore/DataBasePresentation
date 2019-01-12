@@ -15,23 +15,44 @@ public class DBConnection {
 
     private Connection connection;
     private java.sql.Statement statement;
-    private int login = 0;	//numer telefonu po ktorym identyfukujemy uzytkownika
+    private int login = 0; // numer telefonu po ktorym identyfukujemy uzytkownika
 
-    //utworzenie po��czenia przy poprawnym logowaniu
-    public DBConnection(int phoneNumber, String password) {
+    // utworzenie polaczenia administratora
+    public DBConnection(String admin) {
         try {
             Class.forName(DBDRIVER).newInstance();
             connection = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
-            if (!verify(phoneNumber, password))
+            if (admin != "123") {
+                System.out.println("Bledne dane admina");
                 closeConnection();
-            login = phoneNumber;
-            System.out.println("ZALOGOWANY: " + login);
+            } else {
+                System.out.println("ZALOGOWANO ADMINA");
+            }
 
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
-    //zamkniecie polaczenia wykonywanie przy wylogowaniu
+
+    // utworzenie po��czenia przy poprawnym logowaniu
+    public DBConnection(int phoneNumber, String password) {
+        try {
+            Class.forName(DBDRIVER).newInstance();
+            connection = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+            if (!verify(phoneNumber, password)) {
+                System.out.println("BLEDNE DANE");
+                closeConnection();
+            } else {
+                login = phoneNumber;
+                System.out.println("ZALOGOWANY: " + login);
+            }
+
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // zamkniecie polaczenia wykonywanie przy wylogowaniu
     public void closeConnection() {
         try {
             connection.close();
@@ -39,8 +60,9 @@ public class DBConnection {
             System.out.println("Connection doesn't exist");
         }
     }
-    //sprawdzenie poprawnosci loginu i hasla
-    boolean verify(int telNumber, String password) {
+
+    // sprawdzenie poprawnosci loginu i hasla
+    public boolean verify(int telNumber, String password) {
         try {
             statement = connection.createStatement();
             ResultSet result = statement.executeQuery("SELECT TelNumber, Password From USER");
@@ -60,9 +82,9 @@ public class DBConnection {
         return false;
     }
 
-    //generowanie raportow, wybor strefy, rodzaju pojazdu, zakresu czasu
-    ResultSet raport(String zone[], String vehicle[], Timestamp start, Timestamp end) {
-        String query = "select ZONE.Name, PRESENCE.Start_date, PRESENCE.End_date, VEHICLE.Type from PRESENCE\r\n"
+    // generowanie raportow, wybor strefy, rodzaju pojazdu, zakresu czasu
+    public ResultSet raport(String zone[], String vehicle[], Timestamp start, Timestamp end) {
+        String query = "select ZONE.Name, PRESENCE.Start_date, PRESENCE.End_date, VEHICLE.Type, PRESENCE.Registration_number from PRESENCE\r\n"
                 + "INNER JOIN ZONE ON PRESENCE.Zone_ID = ZONE.id\r\n"
                 + "INNER JOIN VEHICLE ON PRESENCE.Registration_number = VEHICLE.Registration_number\r\n"
                 + "INNER JOIN USER ON VEHICLE.User_id = USER.id\r\n" + "WHERE Start_date >= \"" + start + "\"\r\n"
@@ -77,9 +99,9 @@ public class DBConnection {
         query += "(";
         for (int i = 0; i < vehicle.length; i++) {
             if (i == vehicle.length - 1)
-                query += "VEHICLE.Type = \"" + vehicle[i] + "\")";
+                query += "PRESENCE.Registration_number = \"" + vehicle[i] + "\")";
             else
-                query += "VEHICLE.Type = \"" + vehicle[i] + "\" ||";
+                query += "PRESENCE.Registration_number = \"" + vehicle[i] + "\" ||";
         }
         try {
             statement = connection.createStatement();
@@ -94,8 +116,8 @@ public class DBConnection {
 
     }
 
-    //zwraca liste nazw mozliwych typow pojazdu
-    ResultSet vehicleList() {
+    // zwraca liste nazw mozliwych typow pojazdu
+    public ResultSet vehicleList() {
         try {
             statement = connection.createStatement();
             ResultSet result = statement.executeQuery("SELECT Type from TARIFF_VEHICLE");
@@ -107,7 +129,7 @@ public class DBConnection {
         return null;
     }
 
-    //zwraca liste nazw mozliwych stref
+    // zwraca liste nazw mozliwych stref
     public ResultSet zoneList() {
         try {
             statement = connection.createStatement();
@@ -120,12 +142,11 @@ public class DBConnection {
         return null;
     }
 
-    //zwraca ID zalogowanego uzytkownika
-    int getUserId()
-    {
+    // zwraca ID zalogowanego uzytkownika
+    public int getUserId() {
         try {
             statement = connection.createStatement();
-            ResultSet result = statement.executeQuery("SELECT id from USER where TelNumber = 916361628" );
+            ResultSet result = statement.executeQuery("SELECT id from USER where TelNumber = " + login);
             statement.close();
             while (result.next()) {
                 int id = result.getInt("USER.id");
@@ -137,12 +158,13 @@ public class DBConnection {
         return 0;
     }
 
-    //dodaje pojazd zalogowanego uzytkownika do VEHICLE o podanym numerze rejestracyjnym i typie pojazdu
-    void addVehicle (String regNumber, String type)
-    {
+    // dodaje pojazd zalogowanego uzytkownika do VEHICLE o podanym numerze
+    // rejestracyjnym i typie pojazdu
+    public void addVehicle(String regNumber, String type) {
         try {
             statement = connection.createStatement();
-            statement.executeQuery("INSERT into VEHICLE VALUES (\"" + regNumber + "\", \"" + type + "\"," + getUserId() + ") ");
+            statement.executeQuery(
+                    "INSERT into VEHICLE VALUES (\"" + regNumber + "\", \"" + type + "\"," + getUserId() + ") ");
             statement.close();
 
         } catch (SQLException e) {

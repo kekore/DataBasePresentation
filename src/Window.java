@@ -20,8 +20,8 @@ public class Window extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize(600,600);
-        setLocation(screenSize.width/2-300,screenSize.height/2-300);
+        setSize(600,660);
+        setLocation(screenSize.width/2-300,screenSize.height/2-330);
         setLayout(new FlowLayout(FlowLayout.CENTER));
 
         loginPanel = new LoginPanel(this);
@@ -32,8 +32,6 @@ public class Window extends JFrame implements ActionListener {
         setVisible(true);
 
         state = State.LOGIN;
-
-        connection = new DBConnection(916361628, "BKi-I%Z(0mx");
     }
 
     @Override
@@ -43,7 +41,7 @@ public class Window extends JFrame implements ActionListener {
                 if(((JButton)e.getSource()).getText().equals("Zaloguj")){
                     System.out.println("KLIKNIETO ZALOGUJ");
                     //if(authorized)
-                    //connection = new DBConnection(916361628, "BKi-I%Z(0mx");
+                    connection = new DBConnection(916361628, "BKi-I%Z(0mx");
                     //
                     remove(loginPanel);
                     mPanel = new MPanel(this);
@@ -55,6 +53,7 @@ public class Window extends JFrame implements ActionListener {
                 }
                 else if(((JButton)e.getSource()).getText().equals("Zarejestruj się")){
                     System.out.println("KLIKNIETO ZAREJESTRUJ");
+                    connection = new DBConnection("123");
                     remove(loginPanel);
                     registerPanel = new RegisterPanel(this);
                     add(registerPanel);
@@ -63,7 +62,7 @@ public class Window extends JFrame implements ActionListener {
                     state = State.REGISTER;
                 }
                 else if(((JButton)e.getSource()).getText().equals("Zamknij aplikację")){
-                    connection.closeConnection();//logout of database
+                    //connection.closeConnection();//logout of database
                     dispose();
                 }
                 break;
@@ -85,6 +84,7 @@ public class Window extends JFrame implements ActionListener {
                     state = State.NEWCAR;
                 }
                 else if(((JButton)e.getSource()).getText().equals("Wyloguj")){
+                    connection.closeConnection();
                     //Wyloguj
                     remove(mPanel);
                     add(loginPanel);
@@ -113,6 +113,7 @@ public class Window extends JFrame implements ActionListener {
                 break;
             case REGISTER:
                 if(((JButton)e.getSource()).getText().equals("Powrót")){
+                    connection.closeConnection();
                     remove(registerPanel);
                     add(loginPanel);
                     revalidate();

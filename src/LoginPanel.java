@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-//TODO maskowanie hasla
 public class LoginPanel extends JPanel {
     private TopLoginPanel topPanel;
     private ButtonLoginPanel buttonPanel;
