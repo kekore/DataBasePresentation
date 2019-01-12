@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 //TODO maskowanie hasla
 public class RegisterPanel extends JPanel implements ActionListener {
@@ -11,7 +13,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
     private JButton backBut;
     private JTextArea messField;
     RegisterPanel(Window parentWindow){
-        formPanel = new FormPanel();
+        formPanel = new FormPanel(parentWindow);
 
         titleField = new JTextField("Zarejestruj się");
         titleField.setEditable(false);
@@ -57,6 +59,8 @@ public class RegisterPanel extends JPanel implements ActionListener {
 class FormPanel extends JPanel implements ActionListener{
     private JTextField[] texts;
     private JTextField[] fields;
+    private JPasswordField pass1;
+    private JPasswordField pass2;
     private JMenuBar bar1;
     private JMenuBar bar2;
     private JMenu menu1;
@@ -64,8 +68,9 @@ class FormPanel extends JPanel implements ActionListener{
     private ButtonGroup group1;
     private ButtonGroup group2;
     private JRadioButtonMenuItem[] radios1;
-    private JRadioButtonMenuItem[] radios2;
-    FormPanel(){
+    //private JRadioButtonMenuItem[] radios2;
+    private ArrayList<JRadioButtonMenuItem> radios2;
+    FormPanel(Window parentWindow){
         setLayout(new GridLayout(11, 2, 4, 6));
 
         texts = new JTextField[11];
@@ -87,32 +92,50 @@ class FormPanel extends JPanel implements ActionListener{
             t.setHorizontalAlignment(JTextField.RIGHT);
         }
 
-        fields = new JTextField[9];
-        for(int f = 0; f < 9; f++){
+        fields = new JTextField[7];
+        for(int f = 0; f < 7; f++){
             fields[f] = new JTextField();
         }
         /*for(JTextField f : fields){
             f = new JTextField();
         }*/
+        pass1 = new JPasswordField();
+        pass2 = new JPasswordField();
 
         bar1 = new JMenuBar();
         bar2 = new JMenuBar();
         menu1 = new JMenu("Wybierz rodzaj");
         menu2 = new JMenu("Wybierz strefę");
+
+        //take list of zones from database
+        ResultSet zones = parentWindow.connection.zoneList();
+        group2 = new ButtonGroup();
+        radios2 = new ArrayList<JRadioButtonMenuItem>();
+        try{
+            while(zones.next()){
+                radios2.add(new JRadioButtonMenuItem(zones.getString("ZONE.Name")));
+                radios2.get(radios2.size()-1).addActionListener(this);
+                group2.add(radios2.get(radios2.size()-1));
+                menu2.add(radios2.get(radios2.size()-1));
+            }
+        }catch (Exception e){
+
+        }
+
         //pobierz rodzaje z bazy
         group1 = new ButtonGroup();
         radios1 = new JRadioButtonMenuItem[4];
-        group2 = new ButtonGroup();
-        radios2 = new JRadioButtonMenuItem[4];
+        //group2 = new ButtonGroup();
+        //radios2 = new JRadioButtonMenuItem[4];
         for(int i = 0; i < 4; i++){
             radios1[i] = new JRadioButtonMenuItem("Typ " + i);
             radios1[i].addActionListener(this);
-            radios2[i] = new JRadioButtonMenuItem("Strefa " + i);
-            radios2[i].addActionListener(this);
+            //radios2[i] = new JRadioButtonMenuItem("Strefa " + i);
+            //radios2[i].addActionListener(this);
             group1.add(radios1[i]);
             menu1.add(radios1[i]);
-            group2.add(radios2[i]);
-            menu2.add(radios2[i]);
+            //group2.add(radios2[i]);
+            //menu2.add(radios2[i]);
         }
         bar1.add(menu1);
         bar2.add(menu2);
@@ -136,9 +159,9 @@ class FormPanel extends JPanel implements ActionListener{
         add(texts[8]);
         add(fields[6]);
         add(texts[9]);
-        add(fields[7]);
+        add(pass1);
         add(texts[10]);
-        add(fields[8]);
+        add(pass2);
     }
 
     @Override

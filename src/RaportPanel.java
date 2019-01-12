@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 public class RaportPanel extends JPanel implements ActionListener {
@@ -215,7 +216,7 @@ class ZonePanel extends JPanel implements ActionListener{
     protected JTextField name;
     protected JMenuBar bar;
     protected JMenu zoneList;
-    protected CustomJCBMenuItem[] boxes;
+    protected ArrayList<CustomJCBMenuItem> boxes;
     ZonePanel(Window parentWindow, RaportPanel parentPanel){
         name = new JTextField("Wybierz strefy");
         name.setEditable(false);
@@ -227,14 +228,24 @@ class ZonePanel extends JPanel implements ActionListener{
         zoneList.setPreferredSize(new Dimension(200,20));
 
         //take list of zones from database
-        //ArrayList<String> cars = new ArrayList<String>();
-        boxes = new CustomJCBMenuItem[10];
-        for(int i = 0; i < 10; i++){
-            boxes[i] = new CustomJCBMenuItem("Zone " + i);
-            boxes[i].addActionListener(this);
-            boxes[i].addActionListener(parentPanel);
-            zoneList.add(boxes[i]);
+        ResultSet zones = parentWindow.connection.zoneList();
+        boxes = new ArrayList<CustomJCBMenuItem>();
+        try{
+            while(zones.next()){
+                boxes.add(new CustomJCBMenuItem(zones.getString("ZONE.Name")));
+                boxes.get(boxes.size()-1).addActionListener(this);
+                boxes.get(boxes.size()-1).addActionListener(parentPanel);
+                zoneList.add(boxes.get(boxes.size()-1));
+            }
+        }catch (Exception e){
+
         }
+//        for(int i = 0; i < 10; i++){
+//            boxes[i] = new CustomJCBMenuItem("Zone " + i);
+//            boxes[i].addActionListener(this);
+//            boxes[i].addActionListener(parentPanel);
+//            zoneList.add(boxes[i]);
+//        }
 
         bar.add(zoneList);
 

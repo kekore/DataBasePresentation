@@ -33,7 +33,8 @@ class TopLoginPanel extends JPanel{
     private JTextField numberPrompt;
     protected JTextField numberField;
     private JTextField passPrompt;
-    protected JTextField passField;
+    //protected JTextField passField;
+    protected JPasswordField passField;
 
     protected TopLoginPanel(Window parentWindow){
         //parent = parentWindow;
@@ -56,7 +57,8 @@ class TopLoginPanel extends JPanel{
         passPrompt = new JTextField("Hasło:");
         passPrompt.setEditable(false);
         passPrompt.setBorder(null);
-        passField = new JTextField();
+        //passField = new JTextField();
+        passField = new JPasswordField();
 
         setLayout(new GridLayout(6,1,0,0));
 
