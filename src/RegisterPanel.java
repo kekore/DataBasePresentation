@@ -194,9 +194,7 @@ class FormPanel extends JPanel implements ActionListener{
         radios2 = new ArrayList<JRadioButtonMenuItem>();
         try{
             while(cars.next()){
-                String type = cars.getString("TARIFF_VEHICLE.Type");
-                String str = type.replaceAll("_"," ");
-                radios1.add(new JRadioButtonMenuItem(str));
+                radios1.add(new JRadioButtonMenuItem(cars.getString("TARIFF_VEHICLE.Type")));
                 radios1.get(radios1.size()-1).addActionListener(this);
                 group1.add(radios1.get(radios1.size()-1));
                 menu1.add(radios1.get(radios1.size()-1));

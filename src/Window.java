@@ -44,14 +44,13 @@ public class Window extends JFrame implements ActionListener {
             case LOGIN:
                 if(((JButton)e.getSource()).getText().equals("Zaloguj")){
                     System.out.println("KLIKNIETO ZALOGUJ");
-                    //if(authorized)
-                    //connection = new DBConnection(916361628, "BKi-I%Z(0mx");
-                    connection = null;
-                    if(loginPanel.topPanel.numberField.getText().length() > 0 &&
-                            loginPanel.topPanel.numberField.getText().chars().allMatch(Character::isDigit)){
-                        long phoneNumber = Long.parseLong(loginPanel.topPanel.numberField.getText());
-                        connection = new DBConnection(phoneNumber, hashPass(loginPanel.topPanel.passField.getPassword()));
-                    }
+                    connection = new DBConnection(916361628, "BKi-I%Z(0mx");
+//                    connection = null;
+//                    if(loginPanel.topPanel.numberField.getText().length() > 0 &&
+//                            loginPanel.topPanel.numberField.getText().chars().allMatch(Character::isDigit)){
+//                        long phoneNumber = Long.parseLong(loginPanel.topPanel.numberField.getText());
+//                        connection = new DBConnection(phoneNumber, hashPass(loginPanel.topPanel.passField.getPassword()));
+//                    }
 
                     if(connection != null && connection.login != 0) {
                         remove(loginPanel);
@@ -64,7 +63,6 @@ public class Window extends JFrame implements ActionListener {
                     else{
                         loginPanel.topPanel.messField.setText("Błędne dane logowania!");
                     }
-                    //else wypisz blad
                 }
                 else if(((JButton)e.getSource()).getText().equals("Zarejestruj się")){
                     System.out.println("KLIKNIETO ZAREJESTRUJ");
@@ -103,6 +101,7 @@ public class Window extends JFrame implements ActionListener {
                     //Wyloguj
                     loginPanel.topPanel.numberField.setText("");
                     loginPanel.topPanel.passField.setText("");
+                    loginPanel.topPanel.messField.setText("");
                     remove(mPanel);
                     add(loginPanel);
                     revalidate();
