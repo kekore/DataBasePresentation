@@ -34,6 +34,10 @@ public class Window extends JFrame implements ActionListener {
         state = State.LOGIN;
     }
 
+    protected String hashPass(char[] pass){
+        return String.valueOf(new String (pass).hashCode());
+    }
+
     @Override
     public void actionPerformed(ActionEvent e){
         switch (state){
@@ -41,14 +45,25 @@ public class Window extends JFrame implements ActionListener {
                 if(((JButton)e.getSource()).getText().equals("Zaloguj")){
                     System.out.println("KLIKNIETO ZALOGUJ");
                     //if(authorized)
-                    connection = new DBConnection(916361628, "BKi-I%Z(0mx");
-                    //
-                    remove(loginPanel);
-                    mPanel = new MPanel(this);
-                    add(mPanel);
-                    revalidate();
-                    repaint();
-                    state = State.M;
+                    //connection = new DBConnection(916361628, "BKi-I%Z(0mx");
+                    connection = null;
+                    if(loginPanel.topPanel.numberField.getText().length() > 0 &&
+                            loginPanel.topPanel.numberField.getText().chars().allMatch(Character::isDigit)){
+                        long phoneNumber = Long.parseLong(loginPanel.topPanel.numberField.getText());
+                        connection = new DBConnection(phoneNumber, hashPass(loginPanel.topPanel.passField.getPassword()));
+                    }
+
+                    if(connection != null && connection.login != 0) {
+                        remove(loginPanel);
+                        mPanel = new MPanel(this);
+                        add(mPanel);
+                        revalidate();
+                        repaint();
+                        state = State.M;
+                    }
+                    else{
+                        loginPanel.topPanel.messField.setText("Błędne dane logowania!");
+                    }
                     //else wypisz blad
                 }
                 else if(((JButton)e.getSource()).getText().equals("Zarejestruj się")){
@@ -86,6 +101,8 @@ public class Window extends JFrame implements ActionListener {
                 else if(((JButton)e.getSource()).getText().equals("Wyloguj")){
                     connection.closeConnection();
                     //Wyloguj
+                    loginPanel.topPanel.numberField.setText("");
+                    loginPanel.topPanel.passField.setText("");
                     remove(mPanel);
                     add(loginPanel);
                     revalidate();

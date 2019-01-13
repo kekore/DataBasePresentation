@@ -7,11 +7,13 @@ import java.util.ArrayList;
 
 public class RegisterPanel extends JPanel implements ActionListener {
     private JTextField titleField;
+    private Window parent;
     private FormPanel formPanel;
     private JButton registerBut;
     private JButton backBut;
     private JTextArea messField;
     RegisterPanel(Window parentWindow){
+        parent = parentWindow;
         formPanel = new FormPanel(parentWindow);
 
         titleField = new JTextField("Zarejestruj się");
@@ -117,6 +119,19 @@ public class RegisterPanel extends JPanel implements ActionListener {
             }
             if(legal){
                 //register new user
+                String formData[] = new String[10];
+                formData[0] = formPanel.fields[0].getText();
+                formData[1] = formPanel.fields[1].getText();
+                formData[2] = formPanel.fields[2].getText();
+                formData[3] = formPanel.fields[3].getText();
+                formData[4] = type.getText();
+                formData[5] = zone.getText();
+                formData[6] = formPanel.fields[4].getText();
+                formData[7] = formPanel.fields[5].getText();
+                formData[8] = formPanel.fields[6].getText();
+                //formData[9] = String.valueOf(new String (formPanel.pass1.getPassword()).hashCode());
+                formData[9] = parent.hashPass(formPanel.pass1.getPassword());
+                parent.connection.addUser(formData);
             }
         }
     }

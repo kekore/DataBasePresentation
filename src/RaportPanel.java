@@ -46,7 +46,7 @@ class TopRaportPanel extends JPanel{
 
         raportTable = new RaportTable(parentWindow, botRaportPanel);
         scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(400,220));
+        scrollPane.setPreferredSize(new Dimension(500,220));
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setViewportView(raportTable);
@@ -80,6 +80,8 @@ class RaportTable extends JPanel implements ActionListener {
     }
 
     protected void update(){
+        boolean flag = true;
+        botRaport.messField.setText("");
         //prepare parameters
         ArrayList<CustomJCBMenuItem> zonesList = botRaport.zonePanel.getChosenZones();
         CustomJCBMenuItem[] chosenZonesArray = zonesList.toArray(new CustomJCBMenuItem[zonesList.size()]);
@@ -96,9 +98,21 @@ class RaportTable extends JPanel implements ActionListener {
             vehicle[i] = chosenCarsArray[i].getText();
             System.out.println(vehicle[i]);
         }
+
+        Timestamp start = Timestamp.valueOf("1970-01-01 00:00:01");
+        Timestamp end = Timestamp.valueOf("2100-12-30 23:23:59");
+        try{
+            start = Timestamp.valueOf(botRaport.timePanel.start.getText() + " 00:00:00");
+            end = Timestamp.valueOf(botRaport.timePanel.end.getText() + " 23:59:59");
+        } catch (IllegalArgumentException e){
+            flag = false;
+            botRaport.messField.setText("Brak lub błędny przedział czasowy");
+        }
         //get table
-        Timestamp start = Timestamp.valueOf("2018-01-01 00:47:00");
-        Timestamp end = Timestamp.valueOf("2018-12-29 00:47:00");
+        if(!flag) {
+            start = Timestamp.valueOf("1970-01-01 00:00:01");
+            end = Timestamp.valueOf("2100-12-30 23:59:59");
+        }
         ResultSet raport = parent.connection.raport(zone, vehicle, start, end);
         //update table
         int rows = 60;
@@ -117,6 +131,9 @@ class RaportTable extends JPanel implements ActionListener {
         table.setValueAt("Zakończenie",0,2);
         table.setValueAt("Rejestracja",0,3);
         table.setValueAt("Koszt",0,4);
+        table.getColumnModel().getColumn(1).setPreferredWidth(132);
+        table.getColumnModel().getColumn(2).setPreferredWidth(132);
+        table.getColumnModel().getColumn(4).setPreferredWidth(50);
 
         try{
             do{
@@ -150,7 +167,7 @@ class BotRaportPanel extends JPanel{
         carPanel = new CarPanel(parentWindow, parentPanel);
         zonePanel = new ZonePanel(parentWindow, parentPanel);
 
-        messField = new JTextArea("TUTAJ BEDZIE INFO CO EWENTUALNIE ZLE WPISAL");
+        messField = new JTextArea("");
         messField.setEditable(false);
         messField.setBorder(null);
         messField.setOpaque(false);
@@ -161,9 +178,9 @@ class BotRaportPanel extends JPanel{
 
         add(butPanel);
         add(timePanel);
+        add(messField);
         add(carPanel);
         add(zonePanel);
-        add(messField);
     }
 }
 
@@ -185,18 +202,28 @@ class ButPanel extends JPanel{
 
 class TimePanel extends JPanel{
     protected JTextField name;
+    protected JTextField from;
     protected JTextField start;
+    protected JTextField to;
     protected JTextField end;
     TimePanel(Window parentWindow, RaportPanel parentPanel){
-        name = new JTextField("Wybierz przedział czasowy");
+        name = new JTextField("Wybierz przedział czasowy (rrrr-mm-dd)");
         name.setEditable(false);
         name.setBorder(null);
-        name.setPreferredSize(new Dimension(150,20));
+        name.setPreferredSize(new Dimension(250,20));
 
+        from = new JTextField("Od:");
+        from.setEditable(false);
+        from.setBorder(null);
+        from.setPreferredSize(new Dimension(20,20));
         start = new JTextField();
         start.setPreferredSize(new Dimension(100,20));
         start.addActionListener(parentPanel);
 
+        to = new JTextField("Do:");
+        to.setEditable(false);
+        to.setBorder(null);
+        to.setPreferredSize(new Dimension(20,20));
         end = new JTextField();
         end.setPreferredSize(new Dimension(100,20));
         end.addActionListener(parentPanel);
@@ -204,7 +231,9 @@ class TimePanel extends JPanel{
         //setLayout(new GridLayout(1,3,10,0));
 
         add(name);
+        add(from);
         add(start);
+        add(to);
         add(end);
     }
 }
@@ -222,7 +251,7 @@ class CarPanel extends JPanel implements ActionListener{
     //private JComboBox comboBox;
     //private JCheckBoxMenuItem menu;
     CarPanel(Window parentWindow, RaportPanel parentPanel){
-        name = new JTextField("Wybierz samochody");
+        name = new JTextField("Wybierz pojazdy");
         name.setEditable(false);
         name.setBorder(null);
         name.setPreferredSize(new Dimension(150,20));
@@ -230,7 +259,7 @@ class CarPanel extends JPanel implements ActionListener{
         //carList = new JList<JCheckBox>(boxes);
         //carList = new JComboBox<JCheckBox>(boxes);
         bar = new JMenuBar();
-        carList = new JMenu("Wybierz samochody");
+        carList = new JMenu("Wybierz pojazdy");
         carList.setPreferredSize(new Dimension(200,20));
 
         //take list of cars from database

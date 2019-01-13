@@ -15,7 +15,7 @@ public class DBConnection {
 
     private Connection connection;
     private java.sql.Statement statement;
-    private int login = 0; // numer telefonu po ktorym identyfukujemy uzytkownika
+    public long login = 0; // numer telefonu po ktorym identyfukujemy uzytkownika
 
     // utworzenie polaczenia administratora
     public DBConnection(String admin) {
@@ -35,7 +35,7 @@ public class DBConnection {
     }
 
     // utworzenie po��czenia przy poprawnym logowaniu
-    public DBConnection(int phoneNumber, String password) {
+    public DBConnection(long phoneNumber, String password) {
         try {
             Class.forName(DBDRIVER).newInstance();
             connection = DriverManager.getConnection(DBURL, DBUSER, DBPASS);
@@ -62,13 +62,13 @@ public class DBConnection {
     }
 
     // sprawdzenie poprawnosci loginu i hasla
-    public boolean verify(int telNumber, String password) {
+    public boolean verify(long telNumber, String password) {
         try {
             statement = connection.createStatement();
             ResultSet result = statement.executeQuery("SELECT TelNumber, Password From USER");
             statement.close();
             while (result.next()) {
-                int TelNumber = result.getInt("TelNumber");
+                long TelNumber = result.getLong("TelNumber");
                 if (TelNumber != telNumber)
                     continue;
                 String Password = result.getString("Password");
@@ -162,7 +162,7 @@ public class DBConnection {
         try {
             statement = connection.createStatement();
             ResultSet result = statement
-                    .executeQuery("SELECT id from USER where TelNumber = " + Integer.toString(login));
+                    .executeQuery("SELECT id from USER where TelNumber = " + Long.toString(login));
             statement.close();
             while (result.next()) {
                 int id = result.getInt("USER.id");

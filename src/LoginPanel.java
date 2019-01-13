@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class LoginPanel extends JPanel {
-    private TopLoginPanel topPanel;
+    protected TopLoginPanel topPanel;
     private ButtonLoginPanel buttonPanel;
     public LoginPanel(Window parentWindow){
         //parent = parentWindow;
@@ -34,6 +34,7 @@ class TopLoginPanel extends JPanel{
     private JTextField passPrompt;
     //protected JTextField passField;
     protected JPasswordField passField;
+    protected JTextField messField;
 
     protected TopLoginPanel(Window parentWindow){
         //parent = parentWindow;
@@ -59,7 +60,12 @@ class TopLoginPanel extends JPanel{
         //passField = new JTextField();
         passField = new JPasswordField();
 
-        setLayout(new GridLayout(6,1,0,0));
+        messField = new JTextField();
+        messField.setEditable(false);
+        messField.setBorder(null);
+        messField.setPreferredSize(new Dimension(100,20));
+
+        setLayout(new GridLayout(7,1,0,0));
 
         add(titleField);
         add(carLabel);
@@ -67,6 +73,7 @@ class TopLoginPanel extends JPanel{
         add(numberField);
         add(passPrompt);
         add(passField);
+        add(messField);
     }
 }
 
