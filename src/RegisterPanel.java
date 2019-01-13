@@ -128,7 +128,12 @@ public class RegisterPanel extends JPanel implements ActionListener {
                 formData[5] = zone.getText();
                 formData[6] = formPanel.fields[4].getText();
                 formData[7] = formPanel.fields[5].getText();
-                formData[8] = formPanel.fields[6].getText();
+                //formData[8] = formPanel.fields[6].getText();
+                //formData[8] = (new StringBuilder(formPanel.fields[6].getText())).deleteCharAt(2)).toString();
+                String date = "20" + formPanel.fields[6].getText().substring(3,5) + "-" +
+                        formPanel.fields[6].getText().substring(0,2) + "-01";
+                System.out.println(date);
+                formData[8] = date;
                 //formData[9] = String.valueOf(new String (formPanel.pass1.getPassword()).hashCode());
                 formData[9] = parent.hashPass(formPanel.pass1.getPassword());
                 parent.connection.addUser(formData);

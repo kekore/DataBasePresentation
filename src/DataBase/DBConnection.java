@@ -209,6 +209,7 @@ public class DBConnection {
             statement.close();
         } catch (SQLException e) {
             System.out.println("Pojazd jest juz w bazie");
+            System.out.println(e.getSQLState());
         }
 
     }
