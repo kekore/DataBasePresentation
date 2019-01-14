@@ -128,13 +128,10 @@ public class RegisterPanel extends JPanel implements ActionListener {
                 formData[5] = zone.getText();
                 formData[6] = formPanel.fields[4].getText();
                 formData[7] = formPanel.fields[5].getText();
-                //formData[8] = formPanel.fields[6].getText();
-                //formData[8] = (new StringBuilder(formPanel.fields[6].getText())).deleteCharAt(2)).toString();
                 String date = "20" + formPanel.fields[6].getText().substring(3,5) + "-" +
                         formPanel.fields[6].getText().substring(0,2) + "-01";
                 System.out.println(date);
                 formData[8] = date;
-                //formData[9] = String.valueOf(new String (formPanel.pass1.getPassword()).hashCode());
                 formData[9] = parent.hashPass(formPanel.pass1.getPassword());
                 parent.connection.addUser(formData);
             }
@@ -213,22 +210,6 @@ class FormPanel extends JPanel implements ActionListener{
         }catch (Exception e) {
 
         }
-
-        //pobierz rodzaje z bazy
-        //group1 = new ButtonGroup();
-        //radios1 = new JRadioButtonMenuItem[4];
-        //group2 = new ButtonGroup();
-        //radios2 = new JRadioButtonMenuItem[4];
-        for(int i = 0; i < 4; i++){
-            //radios1[i] = new JRadioButtonMenuItem("Typ " + i);
-            //radios1[i].addActionListener(this);
-            //radios2[i] = new JRadioButtonMenuItem("Strefa " + i);
-            //radios2[i].addActionListener(this);
-            //group1.add(radios1[i]);
-            //menu1.add(radios1[i]);
-            //group2.add(radios2[i]);
-            //menu2.add(radios2[i]);
-        }
         bar1.add(menu1);
         bar2.add(menu2);
 
@@ -271,7 +252,6 @@ class FormPanel extends JPanel implements ActionListener{
     public void actionPerformed(ActionEvent e){
         for(JRadioButtonMenuItem radio : radios1){
             if(e.getSource() == radio){
-                //System.out.println(radio.getText());
                 menu1.setText(radio.getText());
                 return;
             }

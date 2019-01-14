@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
@@ -12,22 +11,17 @@ public class RaportPanel extends JPanel implements ActionListener {
     private TopRaportPanel topRaportPanel;
     private BotRaportPanel botRaportPanel;
     RaportPanel(Window parentWindow){
-        //topRaportPanel.setPreferredSize(new Dimension(300,600));
         botRaportPanel = new BotRaportPanel(parentWindow, this);
         topRaportPanel = new TopRaportPanel(parentWindow, botRaportPanel);
 
         setLayout(new GridLayout(2,1,0,10));
-        //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         add(topRaportPanel);
         add(botRaportPanel);
-
-        //TODO get all info and put into table
     }
 
     @Override
     public void actionPerformed(ActionEvent e){
-        //TODO if something changed in bottom panel, do select from database again
         topRaportPanel.raportTable.update();
     }
 }
@@ -41,7 +35,6 @@ class TopRaportPanel extends JPanel{
         titleField.setEditable(false);
         titleField.setBorder(null);
         titleField.setFont(new Font("Comic Sans MS",Font.PLAIN, 30));
-        //titleField.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleField.setHorizontalAlignment(JTextField.CENTER);
 
         raportTable = new RaportTable(parentWindow, botRaportPanel);
@@ -50,7 +43,6 @@ class TopRaportPanel extends JPanel{
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setViewportView(raportTable);
-        //scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -60,7 +52,7 @@ class TopRaportPanel extends JPanel{
     }
 }
 
-class RaportTable extends JPanel implements ActionListener {
+class RaportTable extends JPanel {
     private Window parent;
     private BotRaportPanel botRaport;
     private JTable table;
@@ -69,12 +61,6 @@ class RaportTable extends JPanel implements ActionListener {
         botRaport = botRaportPanel;
 
         table = new JTable(60, 5);
-//        table.setEnabled(false);
-//        table.setValueAt("Nazwa strefy",0,0);
-//        table.setValueAt("Rozpoczęcie",0,1);
-//        table.setValueAt("Zakończenie",0,2);
-//        table.setValueAt("Typ pojazdu",0,3);
-//        table.setValueAt("Koszt",0,4);
         add(table);
         update();
     }
@@ -142,16 +128,17 @@ class RaportTable extends JPanel implements ActionListener {
                table.setValueAt(raport.getTimestamp("PRESENCE.Start_date"),raport.getRow(),1);
                table.setValueAt(raport.getTimestamp("PRESENCE.End_date"),raport.getRow(),2);
                table.setValueAt(raport.getString("PRESENCE.Registration_number"),raport.getRow(),3);
+               float zonePrice = parent.connection.getZonePrice(raport.getString("ZONE.name"));
+               float typeFactor = parent.connection.getVehicleFactor(raport.getString("VEHICLE.Type"));
+               float cost = parent.countCost(raport.getTimestamp("PRESENCE.End_date"),
+                       raport.getTimestamp("PRESENCE.Start_date"), zonePrice, typeFactor);
+               table.setValueAt(cost,raport.getRow(),4);
+               parent.connection.addPayment(cost, raport.getInt("PRESENCE.id"));
             } while(raport.next());
         } catch(Exception e){}
         add(table);
         repaint();
         revalidate();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e){
-
     }
 }
 
@@ -228,8 +215,6 @@ class TimePanel extends JPanel{
         end.setPreferredSize(new Dimension(100,20));
         end.addActionListener(parentPanel);
 
-        //setLayout(new GridLayout(1,3,10,0));
-
         add(name);
         add(from);
         add(start);
@@ -240,24 +225,15 @@ class TimePanel extends JPanel{
 
 class CarPanel extends JPanel implements ActionListener{
     protected JTextField name;
-    //private JList<JCheckBox> carList;
-    //private JComboBox<JCheckBox> carList;
     protected JMenuBar bar;
     protected JMenu carList;
-    //protected CustomJCBMenuItem[] boxes;
     protected ArrayList<CustomJCBMenuItem> boxes;
-    //private CarBoxes carBoxes;
-    //private JScrollPane scrollPane;
-    //private JComboBox comboBox;
-    //private JCheckBoxMenuItem menu;
     CarPanel(Window parentWindow, RaportPanel parentPanel){
         name = new JTextField("Wybierz pojazdy");
         name.setEditable(false);
         name.setBorder(null);
         name.setPreferredSize(new Dimension(150,20));
 
-        //carList = new JList<JCheckBox>(boxes);
-        //carList = new JComboBox<JCheckBox>(boxes);
         bar = new JMenuBar();
         carList = new JMenu("Wybierz pojazdy");
         carList.setPreferredSize(new Dimension(200,20));
@@ -276,23 +252,10 @@ class CarPanel extends JPanel implements ActionListener{
 
         }
 
-        /*carBoxes = new CarBoxes(cars);
-        scrollPane = new JScrollPane();
-        scrollPane.setPreferredSize(new Dimension(100,30));
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setViewportView(carBoxes);*/
-        //comboBox = new JComboBox();
-        //comboBox.add(new JCheckBox("Car0"));
-
         bar.add(carList);
-        //bar.is
-        //carList = new JList<>();
-        //menu = new JCheckBoxMenuItem("menu");
 
         add(name);
         add(bar);
-        //add(menu);
     }
 
     protected ArrayList<CustomJCBMenuItem> getChosenCars(){
@@ -354,12 +317,6 @@ class ZonePanel extends JPanel implements ActionListener{
         }catch (Exception e){
 
         }
-//        for(int i = 0; i < 10; i++){
-//            boxes[i] = new CustomJCBMenuItem("Zone " + i);
-//            boxes[i].addActionListener(this);
-//            boxes[i].addActionListener(parentPanel);
-//            zoneList.add(boxes[i]);
-//        }
 
         bar.add(zoneList);
 
@@ -396,18 +353,6 @@ class ZonePanel extends JPanel implements ActionListener{
         }
     }
 }
-
-/*class CarBoxes extends JPanel{
-    private JCheckBox[] boxes;
-    CarBoxes(ArrayList<String> cars){
-        boxes = new JCheckBox[cars.size()];
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        for(int b = 0; b < cars.size(); b++){
-            boxes[b] = new JCheckBox(cars.get(b));
-            add(boxes[b]);
-        }
-    }
-}*/
 
 class CustomJCBMenuItem extends JCheckBoxMenuItem{
     public CustomJCBMenuItem(String text) {

@@ -63,7 +63,9 @@ public class NewCarPanel extends JPanel implements ActionListener {
             }
             //proceed query for adding car
             if(legal){
-                parent.connection.addVehicle(fPanel.field.getText(), chosenRadio.getText());
+                int result = parent.connection.addVehicle(fPanel.field.getText(), chosenRadio.getText());
+                if(result == 1) messField.setText("Pojazd już istnieje!");
+                if(result == 0) messField.setText("Dodano pojazd pomyślnie!");
             }
         }
     }
@@ -76,7 +78,6 @@ class FPanel extends JPanel implements ActionListener{
 
     private JMenuBar bar;
     private JMenu menu;
-    //private JRadioButtonMenuItem[] radios;
     private ArrayList<JRadioButtonMenuItem> radios;
     private ButtonGroup group;
     FPanel(Window parentWindow){
@@ -109,13 +110,6 @@ class FPanel extends JPanel implements ActionListener{
             }
         } catch (Exception e) {}
 
-        //radios = new JRadioButtonMenuItem[4];
-        //group = new ButtonGroup();
-//        for(int i = 0; i < 4; i++){
-//            radios[i] = new JRadioButtonMenuItem("Type "+i);
-//            group.add(radios[i]);
-//            menu.add(radios[i]);
-//        }
         bar.add(menu);
 
         add(text1);
@@ -139,7 +133,6 @@ class FPanel extends JPanel implements ActionListener{
     public void actionPerformed(ActionEvent e){
         for(JRadioButtonMenuItem radio : radios){
             if(e.getSource() == radio){
-                //System.out.println(radio.getText());
                 menu.setText(radio.getText());
                 return;
             }

@@ -84,7 +84,7 @@ public class DBConnection {
 
     // generowanie raportow, wybor strefy, rodzaju pojazdu, zakresu czasu
     public ResultSet raport(String zone[], String vehicle[], Timestamp start, Timestamp end) {
-        String query = "select ZONE.Name, PRESENCE.Start_date, PRESENCE.End_date, VEHICLE.Type, PRESENCE.Registration_number from PRESENCE\r\n"
+        String query = "select ZONE.Name, PRESENCE.Start_date, PRESENCE.End_date, VEHICLE.Type, PRESENCE.Registration_number, PRESENCE.id from PRESENCE\r\n"
                 + "INNER JOIN ZONE ON PRESENCE.Zone_ID = ZONE.id\r\n"
                 + "INNER JOIN VEHICLE ON PRESENCE.Registration_number = VEHICLE.Registration_number\r\n"
                 + "INNER JOIN USER ON VEHICLE.User_id = USER.id\r\n" + "WHERE Start_date >= \"" + start + "\"\r\n"
@@ -103,6 +103,8 @@ public class DBConnection {
             else
                 query += "PRESENCE.Registration_number = \"" + vehicle[i] + "\" ||";
         }
+
+        System.out.println(query);
         try {
             statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
@@ -121,7 +123,7 @@ public class DBConnection {
     public ResultSet vehicleList() {
         try {
             statement = connection.createStatement();
-            ResultSet result = statement.executeQuery("SELECT Type from TARIFF_VEHICLE");
+            ResultSet result = statement.executeQuery("SELECT Type, Factor from TARIFF_VEHICLE");
             statement.close();
             return result;
         } catch (SQLException e) {
@@ -148,7 +150,7 @@ public class DBConnection {
     public ResultSet zoneList() {
         try {
             statement = connection.createStatement();
-            ResultSet result = statement.executeQuery("SELECT Name from ZONE");
+            ResultSet result = statement.executeQuery("SELECT Name, Price from ZONE");
             statement.close();
             return result;
         } catch (SQLException e) {
@@ -176,11 +178,25 @@ public class DBConnection {
 
     // dodaje pojazd zalogowanego uzytkownika do VEHICLE o podanym numerze
     // rejestracyjnym i typie pojazdu
-    public void addVehicle(String regNumber, String type) {
+    public int addVehicle(String regNumber, String type) {
         try {
             statement = connection.createStatement();
             statement.executeQuery(
                     "INSERT into VEHICLE VALUES (\"" + regNumber + "\", \"" + type + "\"," + getUserId() + ") ");
+            statement.close();
+
+        } catch (SQLException e) {
+            System.out.println("Taki pojazd ju� dodano");
+            return 1;
+        }
+        return 0;
+    }
+
+    public void addPayment(float amount, int id) {
+        try {
+            statement = connection.createStatement();
+            statement.executeQuery(
+                    "UPDATE PAYMENT SET Amount =" + amount + "where Presence_ID =" + id);
             statement.close();
 
         } catch (SQLException e) {
@@ -239,6 +255,36 @@ public class DBConnection {
             while (result.next()) {
                 int zoneId = result.getInt("ZONE.id");
                 return zoneId;
+            }
+        } catch (SQLException e) {
+            System.out.println("Nie jestes zalogowany");
+        }
+        return 0;
+    }
+
+    public float getZonePrice(String zoneName) {
+        try {
+            statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("select Price from ZONE where Name = \"" + zoneName + "\"");
+            statement.close();
+            while (result.next()) {
+                float zonePrice = result.getFloat("ZONE.Price");
+                return zonePrice;
+            }
+        } catch (SQLException e) {
+            System.out.println("Nie jestes zalogowany");
+        }
+        return 0;
+    }
+
+    public float getVehicleFactor(String vehicleType) {
+        try {
+            statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("select Factor from TARIFF_VEHICLE where Type = \'" + vehicleType + "\'");
+            statement.close();
+            while (result.next()) {
+                float vehicleFactory = result.getFloat("TARIFF_VEHICLE.Factor");
+                return vehicleFactory;
             }
         } catch (SQLException e) {
             System.out.println("Nie jestes zalogowany");

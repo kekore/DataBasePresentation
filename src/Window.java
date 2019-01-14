@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
+import java.sql.Timestamp;
 
 public class Window extends JFrame implements ActionListener {
     private LoginPanel loginPanel;
@@ -18,14 +18,12 @@ public class Window extends JFrame implements ActionListener {
     public Window(){
         super("Aplikacja");
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(600,660);
         setLocation(screenSize.width/2-300,screenSize.height/2-330);
         setLayout(new FlowLayout(FlowLayout.CENTER));
 
         loginPanel = new LoginPanel(this);
-        //raportPanel = new RaportPanel(this);
         add(loginPanel);
 
         setResizable(false);
@@ -38,19 +36,29 @@ public class Window extends JFrame implements ActionListener {
         return String.valueOf(new String (pass).hashCode());
     }
 
+    protected float hourDiff(Timestamp end, Timestamp start){
+        System.out.println(end.getTime() - start.getTime());
+        return (end.getTime() - start.getTime())/3600000.0f;
+    }
+
+    protected float countCost(Timestamp end, Timestamp start, float zonePrice, float typeFactor){
+        return Math.round(hourDiff(end, start) * 120.0f * zonePrice * typeFactor)/100.0f;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e){
         switch (state){
             case LOGIN:
                 if(((JButton)e.getSource()).getText().equals("Zaloguj")){
                     System.out.println("KLIKNIETO ZALOGUJ");
-                    connection = new DBConnection(916361628, "BKi-I%Z(0mx");
-//                    connection = null;
-//                    if(loginPanel.topPanel.numberField.getText().length() > 0 &&
-//                            loginPanel.topPanel.numberField.getText().chars().allMatch(Character::isDigit)){
-//                        long phoneNumber = Long.parseLong(loginPanel.topPanel.numberField.getText());
-//                        connection = new DBConnection(phoneNumber, hashPass(loginPanel.topPanel.passField.getPassword()));
-//                    }
+                    //char[] pass1 = {'z','a','q','1','@','W','S','X'};
+                    //connection = new DBConnection(114734205, hashPass(pass1));
+                    connection = null;
+                    if(loginPanel.topPanel.numberField.getText().length() > 0 &&
+                            loginPanel.topPanel.numberField.getText().chars().allMatch(Character::isDigit)){
+                        long phoneNumber = Long.parseLong(loginPanel.topPanel.numberField.getText());
+                        connection = new DBConnection(phoneNumber, hashPass(loginPanel.topPanel.passField.getPassword()));
+                    }
 
                     if(connection != null && connection.login != 0) {
                         remove(loginPanel);
@@ -75,7 +83,6 @@ public class Window extends JFrame implements ActionListener {
                     state = State.REGISTER;
                 }
                 else if(((JButton)e.getSource()).getText().equals("Zamknij aplikację")){
-                    //connection.closeConnection();//logout of database
                     dispose();
                 }
                 break;
@@ -98,7 +105,6 @@ public class Window extends JFrame implements ActionListener {
                 }
                 else if(((JButton)e.getSource()).getText().equals("Wyloguj")){
                     connection.closeConnection();
-                    //Wyloguj
                     loginPanel.topPanel.numberField.setText("");
                     loginPanel.topPanel.passField.setText("");
                     loginPanel.topPanel.messField.setText("");

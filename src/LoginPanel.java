@@ -1,8 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,34 +9,25 @@ public class LoginPanel extends JPanel {
     protected TopLoginPanel topPanel;
     private ButtonLoginPanel buttonPanel;
     public LoginPanel(Window parentWindow){
-        //parent = parentWindow;
-
         setLayout(new GridLayout(2,1,0,50));
         topPanel = new TopLoginPanel(parentWindow);
-        //topPanel.setPreferredSize(new Dimension(100,300));
         add(topPanel);
         buttonPanel = new ButtonLoginPanel(parentWindow);
-        //buttonPanel.setPreferredSize(new Dimension(100,40));
         add(buttonPanel);
     }
 }
 
 class TopLoginPanel extends JPanel{
-    //private JFrame parent;
-
     private JTextField titleField;
     private BufferedImage carImage;
     private JLabel carLabel;
     private JTextField numberPrompt;
     protected JTextField numberField;
     private JTextField passPrompt;
-    //protected JTextField passField;
     protected JPasswordField passField;
     protected JTextField messField;
 
     protected TopLoginPanel(Window parentWindow){
-        //parent = parentWindow;
-
         titleField = new JTextField("Witaj w WarZone!");
         titleField.setEditable(false);
         titleField.setBorder(null);
@@ -57,7 +46,6 @@ class TopLoginPanel extends JPanel{
         passPrompt = new JTextField("Hasło:");
         passPrompt.setEditable(false);
         passPrompt.setBorder(null);
-        //passField = new JTextField();
         passField = new JPasswordField();
 
         messField = new JTextField();
@@ -78,18 +66,11 @@ class TopLoginPanel extends JPanel{
 }
 
 class ButtonLoginPanel extends JPanel{
-    //private JFrame parent;
-
     private JButton loginBut;
     private JButton registerBut;
     private JButton exitBut;
 
     protected ButtonLoginPanel(Window parentWindow){
-        //parent = parentWindow;
-
-        //setLayout(new FlowLayout());
-        //setPreferredSize(new Dimension(100,500));
-
         loginBut = new JButton("Zaloguj");
         loginBut.setMaximumSize(new Dimension(80,30));
         loginBut.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -105,7 +86,6 @@ class ButtonLoginPanel extends JPanel{
         exitBut.setAlignmentX(Component.CENTER_ALIGNMENT);
         exitBut.addActionListener(parentWindow);
 
-        //setLayout(new GridLayout(2,1,20,20));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         add(loginBut);
