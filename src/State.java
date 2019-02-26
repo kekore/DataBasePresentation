@@ -1,3 +1,3 @@
 public enum State {
-    LOGIN
+    LOGIN, M, RAPORT, NEWCAR, REGISTER
 }
